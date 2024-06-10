@@ -1,7 +1,6 @@
 """not my code"""
 # -*- coding: utf-8 -*-
 # ! /usr/bin/env python3
-
 from sys import argv
 from time import sleep, time
 from random import choice, randint
@@ -17,11 +16,13 @@ MAX_PORT = 65535
 timestamp = str(time()).split('.')[0]
 log_file = open('logs/' + timestamp + ".log", "w")
 
+
 def getPortsFromRange(ports):
     sport = ports
     sport = sport[1:len(sport) - 1].split("-")
     ports = range(int(sport[0]), int(sport[1]) + 1)
     return ports
+
 
 def create_package(proto, src_port, dst_ip, dst_port):
     package = Ether() / IP(src=ip, dst=dst_ip)
@@ -145,20 +146,24 @@ def create_positives(signature):
         # no ports for protocol ICMP?
         return pkg / ICMP()
     else:
-        print("Unknown protocol of signature: {} with proto: {}".format(signature.sID, signature.proto))
+        print("Unknown protocol of signature: {} with proto: {}".format(
+            signature.sID, signature.proto))
+
 
 def send_positives():
     print("\n\nSending Positives...")
     for signature in RULES:
         if (signature.srcIP == ip or (signature.dir == "<>" and signature.dstIP == ip)) and not (signature.dstIP.startswith("!") or signature.srcPort.startswith("!") or signature.dstPort.startswith("!")):
             package = create_positives(signature)
-            message = signature.sID + ': ' + signature.__str__() + ' ~> ' + package.summary() + '\n'
+            message = signature.sID + ': ' + signature.__str__() + ' ~> ' + \
+                package.summary() + '\n'
             print("\t{}".format(message.replace("\n", "", 1)))
             SOCKET.send(package)
             sleep(0.5)
             log_file.write(message)
             log_file.flush()
     print("\n\nPositives sent.")
+
 
 def print_menu():
     print("*" * 40)
@@ -169,6 +174,7 @@ def print_menu():
     print("\t(3) send manually created package")
     print("\t(4) exit")
     return int(input("What do you want to do: "))
+
 
 def main():
     running = True
@@ -182,20 +188,24 @@ def main():
             else:
                 send_positives()
         elif selection == 2:
-            selection = input("How many Negatives do you want to send (default = 10)? ")
+            selection = input(
+                "How many Negatives do you want to send (default = 10)? ")
             if len(selection) == 0:
                 send_negatives()
             else:
                 send_negatives(int(selection))
         elif selection == 3:
-            print("Insert following format [protocol] [source port] [destination IP] [destination port]")
+            print(
+                "Insert following format [protocol] [source port] [destination IP] [destination port]")
             selection = input("")
             selection = selection.split(" ")
-            package = create_package(selection[0], int(selection[1]), selection[2], int(selection[3]))
+            package = create_package(selection[0], int(
+                selection[1]), selection[2], int(selection[3]))
             SOCKET.send(package)
             print("Sent package: {}\n\n".format(package.summary()))
         elif selection == 4:
             running = False
+
 
 if __name__ == '__main__':
     main()

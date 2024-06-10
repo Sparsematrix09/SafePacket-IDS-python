@@ -1,30 +1,41 @@
 # µIDS
-simple python network-based signature intrusion detection system
+A simple Python-based network signature intrusion detection system.
 
 ## Required Packages
-* scapy
-* netifaces
+- `scapy`
+- `netifaces`
 
-## Install && Testing
-    git clone ../acsl_IDS.git
-    python3 -m venv acsl_IDS
-    cd acsl_IDS
-    pip3 install -r requirements.txt
-    sudo python3 main.py wlp4s0 default.rules
+## Installation and Testing
+Clone the repository and set up a virtual environment:
 
-## Running sender.py
-    sudo python3 sender.py enp0s8
+```bash
+git clone https://github.com/dreizehnutters/-IDS.git
+cd '-IDS'
+pipx install -r requirements.txt
+sudo python3 main.py <INTERFACE> default.rules
+```
+Replace `<INTERFACE>` with your network interface, e.g., `wlp4s0`.
 
 ## Rules
+Rules are defined in default.rules and eval.rules.
 
-list of rules in default.rules
+### Rule Structure
 
-list evaluation-rules in eval.rules
+```python
+PROTO [!]IP|any:[!]PORT(RANGE)|any <>|-> [!]IP|any:[!]PORT(RANGE)|any *PAYLOAD
+```
 
-structure
+### Example
+```python
+ICMP 192.168.178.22:any -> 1.1.1.1:[500-510] * # -IDS
+```
 
-    PROTO [!]IP|any:[!]PORT(RANGE)|any <>|-> [!]IP|any:[!]PORT(RANGE)|any *PAYLOAD
-
-example
-
-    ICMP 192.168.178.22:any -> 1.1.1.1:[500-510] * # -IDS
+### Explanation
++ `PROTO`: The protocol (e.g., ICMP, TCP, UDP).
++ `[!]IP|any`: Source IP address (use ! for negation, any for any IP).
++ `[!]PORT(RANGE)|any`: Source port (use ! for negation, specify range with [min-max], any for any port).
++ `<>|->`: Direction of traffic (<> for bidirectional, -> for unidirectional).
++ `[!]IP|any`: Destination IP address.
++ `[!]PORT(RANGE)|any`: Destination port.
++ `*PAYLOAD`: Payload pattern.
++ Comments in rules are indicated with #.
