@@ -9,7 +9,7 @@ A simple Python-based network signature intrusion detection system.
 Clone the repository and set up a virtual environment:
 
 ```bash
-git clone https://github.com/dreizehnutters/-IDS.git
+git clone https://github.com/Sparsematrix09/SafePacket-IDS-python.git
 cd '-IDS'
 pipx install -r requirements.txt
 sudo python3 main.py <INTERFACE> default.rules
